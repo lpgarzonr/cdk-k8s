@@ -12,6 +12,9 @@ export class MyChart extends Chart {
     new KubeService(this, "leidy-service", {
       metadata: {
         name: "cdk-nginx-service",
+        labels: {
+          run: "nada",
+        },
       },
       spec: {
         type: "LoadBalancer",
@@ -32,9 +35,20 @@ export class MyChart extends Chart {
         template: {
           metadata: { labels: label },
           spec: {
+            initContainers: [
+              {
+                name: "init-container",
+                image: "alpine",
+                command: [
+                  "/bin/sh",
+                  "-c",
+                  "echo Dale a tu cuerpo alegria macarena..... He macarena ay >> /usr/share/nginx/html/index.html",
+                ],
+              },
+            ],
             containers: [
               {
-                name: "nginx",
+                name: "cdk-nginx",
                 image: "nginx:mainline",
                 ports: [{ containerPort: 80 }],
               },
